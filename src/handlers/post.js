@@ -8,7 +8,7 @@ function handleCreatePost(req, res) {
     createPost(id, text, filePaths)
         .then(
             (doc) => {
-                res.status(201).send('post created successfully.');
+                res.status(201).json({message: "post created successfully"})
             }
         )
         .catch(
@@ -16,7 +16,6 @@ function handleCreatePost(req, res) {
                 res.status(500).json({message: `internal error: ${err}`});
             }
         )
-    console.log(`user ${id} created post with text ${text} and files ${filePaths}`);
 }
 
 async function handleGetPosts(req, res) {

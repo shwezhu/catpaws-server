@@ -9,20 +9,20 @@ function register(req, res) {
         .then(
             (doc) => {
                 if (doc) {
-                    res.status(400).send("register: username already exists");
+                    res.status(400).json({message: "register: username already exists"});
                     return;
                 }
 
                 createUser(username, password)
                     .then(
                         (doc) => {
-                            res.status(201).send("register: user created");
+                            res.status(201).json({message: "register: user created successfully"});
                         }
                     )
                     .catch(
                         (err) => {
                             console.error('Error creating user:', err);
-                            res.status(500).send("register: internal error");
+                            res.status(500).json({message: "register: internal error"});
                         }
                     )
             }
@@ -36,7 +36,7 @@ function login(req, res) {
         .then(
             (doc) => {
                 if (!doc || doc.password !== password) {
-                    res.status(400).json({message: "error: login: credentials invalid"});
+                    res.status(400).json({message: "login: credentials invalid"});
                     return;
                 }
 
@@ -47,13 +47,13 @@ function login(req, res) {
         .catch(
             (err) => {
                 console.error('login:', err);
-                res.status(500).json({message: "error: login: internal error"});
+                res.status(500).json({message: "login: internal error"});
             }
         )
 }
 
 function logout(req, res) {
-    res.status(200).send("logout: success");
+    res.status(200).json({message: "logout: user logged out successfully"});
 }
 
 export {register, login, logout};

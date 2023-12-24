@@ -49,7 +49,7 @@ function validateCredentials(req, res, next) {
     // object destructuring.
     const { username, password } = req.body;
     if (!username || !password) {
-        res.status(400).send("Error: Missing username or password");
+        res.status(400).json({message: "auth: username or password missing"});
         return;
     }
     next();
@@ -64,4 +64,3 @@ function isAuthenticated(req, res, next) {
 }
 
 export { validateCredentials, getMulter, isAuthenticated, setMiddlewares };
-

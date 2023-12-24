@@ -25,7 +25,7 @@ async function main() {
     app.post('/auth/logout', logout);
 
     // Post Routes.
-    app.post('/posts/:id', isAuthenticated, upload.array('file', 6), handleCreatePost);
+    app.post('/posts/:id/new', isAuthenticated, upload.array('file', 6), handleCreatePost);
     app.get('/posts/:id', isAuthenticated, handleGetPosts);
 
     app.listen(6666, () => {
