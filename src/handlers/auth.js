@@ -53,6 +53,7 @@ function login(req, res) {
 }
 
 function logout(req, res) {
+    req.session.destroy();
     res.status(200).json({message: "logout: user logged out successfully"});
 }
 
