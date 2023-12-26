@@ -51,7 +51,7 @@ function login(req, res) {
                 }
 
                 req.session.isAuthenticated = true;
-                res.status(200).json({userID: doc._id});
+                res.status(200).json({userId: doc._id});
             }
         )
         .catch(

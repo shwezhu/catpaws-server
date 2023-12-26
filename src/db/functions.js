@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import User from "../models/user.js";
 import Post from "../models/post.js";
 
@@ -12,8 +13,8 @@ async function createUser(fullname, username, password, email) {
     await newUser.save();
 }
 
-async function getUserByID(userID) {
-    return User.findById(userID);
+async function getUserByID(userId) {
+    return User.findById(userId);
 }
 
 async function createPost(userId, text, images) {
@@ -30,7 +31,7 @@ async function createPost(userId, text, images) {
 async function getPosts(userId, numPosts) {
     try {
         const visiblePosts = await Post.aggregate([
-            { $match: { visibalTo: userId } },
+            { $match: { visibalTo: new mongoose.Types.ObjectId(userId) } },
             { $limit: numPosts },
             {
                 $lookup: {
