@@ -45,16 +45,6 @@ function getMulter(req, res, next) {
     return multer({ storage: storage });
 }
 
-function validateCredentials(req, res, next) {
-    // object destructuring.
-    const { username, password } = req.body;
-    if (!username || !password) {
-        res.status(400).json({message: "auth: username or password missing"});
-        return;
-    }
-    next();
-}
-
 function isAuthenticated(req, res, next) {
     if (req.session.isAuthenticated) {
         return next();
@@ -63,4 +53,4 @@ function isAuthenticated(req, res, next) {
     res.status(401).json({message: "auth: not authenticated"});
 }
 
-export { validateCredentials, getMulter, isAuthenticated, setMiddlewares };
+export { getMulter, isAuthenticated, setMiddlewares };

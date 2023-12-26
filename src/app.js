@@ -1,8 +1,7 @@
 import express from 'express';
 import mongoose from "mongoose";
-import path from "node:path";
 import {register, login, logout} from "./handlers/auth.js";
-import {getMulter, validateCredentials, isAuthenticated, setMiddlewares} from "./middleware/functions.js";
+import {getMulter, isAuthenticated, setMiddlewares} from "./middleware/functions.js";
 import {handleCreatePost, handleGetPosts} from "./handlers/post.js";
 
 const upload = getMulter();
@@ -15,14 +14,10 @@ async function main() {
 
     setMiddlewares(app);
 
-    app.get('/', isAuthenticated, (req, res) => {
-        res.status(500).json({message: "this is the home page"});
-    });
-
     // Auth Routes.
-    app.post('/auth/register', validateCredentials, register);
-    app.post('/auth/login', validateCredentials, login);
-    app.post('/auth/logout', logout);
+    app.post('/auth/register', register);
+    app.post('/auth/login', login);
+    app.get('/auth/logout', isAuthenticated, logout);
 
     // Post Routes.
     app.post('/posts/:id/new', isAuthenticated, upload.array('file', 6), handleCreatePost);

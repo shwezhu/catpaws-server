@@ -4,7 +4,12 @@ import {createUser} from "../db/functions.js";
 
 // todo: hash password
 function register(req, res) {
-    const {username, password} = req.body;
+    const {fullname, username, password, email} = req.body;
+    if (!fullname || !username || !password) {
+        res.status(400).json({message: "register: missing credentials or basic info"});
+        return;
+    }
+
     User.findOne({username: username})
         .then(
             (doc) => {
@@ -13,7 +18,7 @@ function register(req, res) {
                     return;
                 }
 
-                createUser(username, password)
+                createUser(fullname, username, password)
                     .then(
                         (doc) => {
                             res.status(201).json({message: "register: user created successfully"});
@@ -21,8 +26,8 @@ function register(req, res) {
                     )
                     .catch(
                         (err) => {
-                            console.error('Error creating user:', err);
-                            res.status(500).json({message: "register: internal error"});
+                            console.error('register:', err);
+                            res.status(500).json({message: `register: ${err}`});
                         }
                     )
             }
@@ -32,6 +37,11 @@ function register(req, res) {
 // todo: hash password
 function login(req, res) {
     const {username, password} = req.body;
+    if (!username || !password) {
+        res.status(400).json({message: "login: missing credentials"});
+        return;
+    }
+
     User.findOne({username: username})
         .then(
             (doc) => {

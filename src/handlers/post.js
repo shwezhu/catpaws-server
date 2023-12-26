@@ -1,4 +1,4 @@
-import {createPost, getPosts} from "../db/functions.js"
+import {createPost, getPosts, getUserByID} from "../db/functions.js"
 
 
 function handleCreatePost(req, res) {
@@ -19,8 +19,9 @@ function handleCreatePost(req, res) {
 }
 
 async function handleGetPosts(req, res) {
+    const id = req.params.id;
     try {
-        const posts = await getPosts(10);
+        const posts = await getPosts(id, 10);
         res.status(200).json(posts);
     } catch (err) {
         res.status(500).json({message: `internal error: ${err}`});
