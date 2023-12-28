@@ -38,10 +38,10 @@ async function getPosts(userId, numPosts) {
                     from: User.collection.name,
                     localField: 'userId',
                     foreignField: '_id',
-                    as: 'creator'
+                    as: 'author'
                 }
             },
-            { $unwind: '$creator' }, // $lookup returns an array, we need to unwind it
+            { $unwind: '$author' }, // $lookup returns an array, we need to unwind it
             {
                 $project: {
                     text: 1,
@@ -49,8 +49,8 @@ async function getPosts(userId, numPosts) {
                     likes: 1,
                     comments: 1,
                     createdAt: 1,
-                    'creator.username': 1,
-                    'creator.fullname': 1
+                    'author.username': 1,
+                    'author.fullname': 1
                 }
             }
         ]);
