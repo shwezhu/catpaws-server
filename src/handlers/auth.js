@@ -23,8 +23,12 @@ async function handleRegister(req, res) {
     }
 }
 
-// todo: hash password
 async function handleLogin(req, res) {
+    if (req.session.isAuthenticated) {
+        res.status(200).json({message: "ok"});
+        return;
+    }
+
     const {username, password} = req.body;
     if (!username || !password) {
         res.status(400).json({error: "login: missing credentials"});
@@ -49,7 +53,7 @@ async function handleLogin(req, res) {
 
 function handleLogout(req, res) {
     req.session.destroy();
-    res.status(200).json({message: "logout: user logged out successfully"});
+    res.status(200).json({message: "ok"});
 }
 
 export {handleRegister, handleLogin, handleLogout};

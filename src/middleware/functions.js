@@ -50,7 +50,7 @@ function isAuthenticated(req, res, next) {
         return next();
     }
 
-    res.status(401).json({message: "auth: not authenticated"});
+    res.status(401).json({error: "auth: not authenticated"});
 }
 
 export { getMulter, isAuthenticated, setMiddlewares };
