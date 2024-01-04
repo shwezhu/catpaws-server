@@ -15,13 +15,13 @@ async function main() {
     setMiddlewares(app);
 
     // Auth Routes.
-    app.post('/auth/register', handleRegister);
-    app.post('/auth/login', handleLogin);
-    app.post('/auth/logout', isAuthenticated, handleLogout);
+    app.post('/api/users/register', handleRegister);
+    app.post('/api/users/login', handleLogin);
+    app.post('/api/users/logout', isAuthenticated, handleLogout);
 
     // Post Routes.
-    app.post('/posts/:id/new', isAuthenticated, upload.array('file', 6), handleCreatePost);
-    app.get('/posts/:id', isAuthenticated, handleGetPosts);
+    app.post('/api/posts/create', isAuthenticated, upload.array('file', 6), handleCreatePost);
+    app.get('/api/posts', isAuthenticated, handleGetPosts);
     app.post('/api/posts/:post_id/like', isAuthenticated, handleLikePost);
 
     app.listen(6666, () => {
