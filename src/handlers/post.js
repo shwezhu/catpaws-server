@@ -1,41 +1,37 @@
-import {createPost, getPosts, getUserByID} from "../db/functions.js"
+import {createPost, getPosts, likePost} from "../db/functions.js"
 
-
-function handleCreatePost(req, res) {
+async function handleCreatePost(req, res) {
+    /** @namespace req.params.post_id */
     const id = req.params.id;
     const text = req.body.text;
     const filePaths = req.files.map((file) => file.path);
-    createPost(id, text, filePaths)
-        .then(
-            (doc) => {
-                res.status(201).json({message: "post created successfully"})
-            }
-        )
-        .catch(
-            (err) => {
-                res.status(500).json({message: `internal error: ${err}`});
-            }
-        )
-}
 
-async function handleGetPosts(req, res) {
-    const postId = req.params.id;
-    const userId = req.session.userId;
-    
-}
-
-async handleLikePost(req, res) {
-    const id = req.params.id;
-    const post_id = req.params.post_id;
     try {
-        const user = await getUserByID(id);
-        const post = await getPostByID(post_id);
-        post.likes.push(user);
-        await post.save();
-        res.status(200).json({message: "post liked successfully"});
+        await createPost(id, text, filePaths);
+        res.status(201).json({message: "ok"})
     } catch (err) {
-        res.status(500).json({message: `internal error: ${err}`});
+        res.status(500).json({error: `handleCreatePost: internal error: ${err}`});
     }
 }
 
-export {handleCreatePost, handleGetPosts};
+async function handleGetPosts(req, res) {
+    try {
+        const posts = await getPosts(req.params.id, 10);
+        res.status(200).json(posts);
+    } catch (err) {
+        res.status(500).json({error: `handleGetPosts: internal error: ${err}`});
+    }
+}
+
+async function handleLikePost(req, res) {
+    const postId = req.params.post_id;
+    const userId = req.session.userId;
+    try {
+        await likePost(postId, userId);
+        res.status(200).json({message: "ok"});
+    } catch (err) {
+        res.status(500).json({error: `handleLikePost: internal error: ${err}`});
+    }
+}
+
+export {handleCreatePost, handleGetPosts, handleLikePost};

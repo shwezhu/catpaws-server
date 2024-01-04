@@ -5,7 +5,7 @@ const postSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         required: true,
     },
-    visibalTo: {
+    visibleTo: {
         type: [mongoose.Schema.Types.ObjectId],
         default: [],
     },

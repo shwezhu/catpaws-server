@@ -13,53 +13,46 @@ async function createUser(fullname, username, password, email) {
     await newUser.save();
 }
 
-async function getUserByID(userId) {
-    return User.findById(userId);
-}
-
 async function createPost(userId, text, images) {
-    const newPost = new Post({
+    const post = new Post({
         userId: userId,
         text: text,
         images: images,
-        visibalTo: [userId],
+        visibleTo: [userId],
     });
 
-    await newPost.save();
+    await post.save();
 }
 
 async function getPosts(userId, numPosts) {
-    try {
-        const visiblePosts = await Post.aggregate([
-            { $match: { visibalTo: new mongoose.Types.ObjectId(userId) } },
-            { $limit: numPosts },
-            {
-                $lookup: {
-                    from: User.collection.name,
-                    localField: 'userId',
-                    foreignField: '_id',
-                    as: 'author'
-                }
-            },
-            { $unwind: '$author' }, // $lookup returns an array, we need to unwind it
-            {
-                $project: {
-                    text: 1,
-                    images: 1,
-                    likes: 1,
-                    comments: 1,
-                    createdAt: 1,
-                    'author.username': 1,
-                    'author.fullname': 1
-                }
+    return Post.aggregate([
+        {$match: {visibleTo: new mongoose.Types.ObjectId(userId)}},
+        {$limit: numPosts},
+        {
+            $lookup: {
+                from: User.collection.name,
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'author'
             }
-        ]);
-
-        return visiblePosts;
-    } catch (error) {
-        console.error('getPosts: ', error);
-        throw error;
-    }
+        },
+        {$unwind: '$author'}, // $lookup returns an array, we need to unwind it
+        {
+            $project: {
+                text: 1,
+                images: 1,
+                likes: 1,
+                comments: 1,
+                createdAt: 1,
+                'author.username': 1,
+                'author.fullname': 1
+            }
+        }
+    ]);
 }
 
-export {createUser, getUserByID, createPost, getPosts}
+async function likePost(postId, userId) {
+    return Post.updateOne({_id: postId}, {$push: {likes: userId}});
+}
+
+export {createUser, createPost, getPosts, likePost}
