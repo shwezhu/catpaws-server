@@ -29,6 +29,15 @@ async function getPosts(userId, numPosts) {
         {$match: {visibleTo: new mongoose.Types.ObjectId(userId)}},
         {$limit: numPosts},
         {
+            $addFields: {
+                engagement: {
+                    numLikes: { $size: "$likes" },
+                    numComments: { $size: "$comments" },
+                    isLiked: { $in: [new mongoose.Types.ObjectId(userId), "$likes"] },
+                }
+            }
+        },
+        {
             $lookup: {
                 from: User.collection.name,
                 localField: 'userId',
@@ -41,17 +50,27 @@ async function getPosts(userId, numPosts) {
             $project: {
                 text: 1,
                 images: 1,
-                likes: 1,
                 comments: 1,
                 createdAt: 1,
                 'author.username': 1,
-                'author.fullname': 1
+                'author.fullname': 1,
+                'author._id': 1,
+                'engagement': 1,
             }
-        }
+        },
     ]);
 }
 
 async function likePost(postId, userId) {
+    const post = await Post.findOne({_id: postId}, null, null);
+    if (!post) {
+        throw new Error(`likePost: post ${postId} not found`);
+    }
+    /** @namespace post.likes */
+    if (post.likes.includes(userId)) {
+        return Post.updateOne({_id: postId}, {$pull: {likes: userId}});
+    }
+
     return Post.updateOne({_id: postId}, {$push: {likes: userId}});
 }
 

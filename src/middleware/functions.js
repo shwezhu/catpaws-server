@@ -46,7 +46,7 @@ function getMulter(req, res, next) {
 }
 
 function isAuthenticated(req, res, next) {
-    if (req.session.isAuthenticated) {
+    if (req.session.isAuthenticated && req.session.userId) {
         return next();
     }
 
