@@ -15,7 +15,7 @@ async function handleCreatePost(req, res) {
 
 async function handleGetPosts(req, res) {
     try {
-        const posts = await getPosts(req.session.userId, 10);
+        const posts = await getPosts(req.session.userId, 20);
         res.status(200).json(posts);
     } catch (err) {
         res.status(500).json({error: `handleGetPosts: internal error: ${err}`});

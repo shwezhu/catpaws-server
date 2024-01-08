@@ -27,6 +27,7 @@ async function createPost(userId, text, images) {
 async function getPosts(userId, numPosts) {
     return Post.aggregate([
         {$match: {visibleTo: new mongoose.Types.ObjectId(userId)}},
+        {$sort: {createdAt: -1}},
         {$limit: numPosts},
         {
             $addFields: {
