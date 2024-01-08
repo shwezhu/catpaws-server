@@ -75,4 +75,13 @@ async function likePost(postId, userId) {
     return Post.updateOne({_id: postId}, {$push: {likes: userId}});
 }
 
-export {createUser, createPost, getPosts, likePost}
+async function deletePost(postId, userId) {
+    const res = await Post.deleteOne({_id: postId, userId: userId});
+    console.log(res);
+    /** @namespace res.acknowledged */
+    if (!res.acknowledged) {
+        throw new Error(`deletePost: post ${postId} not found for user ${userId}`);
+    }
+}
+
+export {createUser, createPost, getPosts, deletePost, likePost}

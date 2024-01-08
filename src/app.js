@@ -2,7 +2,7 @@ import express from 'express';
 import mongoose from "mongoose";
 import {handleRegister, handleLogin, handleLogout} from "./handlers/auth.js";
 import {getMulter, isAuthenticated, setMiddlewares} from "./middleware/functions.js";
-import {handleCreatePost, handleGetPosts, handleLikePost} from "./handlers/post.js";
+import {handleCreatePost, handleDeletePost, handleGetPosts, handleLikePost} from "./handlers/post.js";
 
 const upload = getMulter();
 const app = express();
@@ -23,6 +23,7 @@ async function main() {
     // Post Routes.
     app.post('/api/posts/create', isAuthenticated, upload.array('file', 6), handleCreatePost);
     app.get('/api/posts', isAuthenticated, handleGetPosts);
+    app.post('/api/posts/:post_id/delete', isAuthenticated, handleDeletePost);
     app.post('/api/posts/:post_id/like', isAuthenticated, handleLikePost);
 
     app.listen(6666, () => {
