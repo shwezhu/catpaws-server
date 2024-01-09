@@ -23,11 +23,15 @@ const postSchema = new mongoose.Schema({
     },
     comments: {
         type: [{
-            userId: {
+            authorId: {
                 type: mongoose.Schema.Types.ObjectId,
                 required: true,
             },
-            text: {
+            authorName: {
+                type: String,
+                required: true,
+            },
+            content: {
                 type: String,
                 required: true,
             },

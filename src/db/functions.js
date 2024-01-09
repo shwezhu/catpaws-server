@@ -51,7 +51,6 @@ async function getPosts(userId, numPosts) {
             $project: {
                 text: 1,
                 images: 1,
-                comments: 1,
                 createdAt: 1,
                 'author.username': 1,
                 'author.fullname': 1,
@@ -77,11 +76,46 @@ async function likePost(postId, userId) {
 
 async function deletePost(postId, userId) {
     const res = await Post.deleteOne({_id: postId, userId: userId});
-    console.log(res);
     /** @namespace res.acknowledged */
     if (!res.acknowledged) {
         throw new Error(`deletePost: post ${postId} not found for user ${userId}`);
     }
 }
 
-export {createUser, createPost, getPosts, deletePost, likePost}
+async function getPost(postId, userId) {
+    return Post.aggregate([
+        {$match: {_id: new mongoose.Types.ObjectId(postId), visibleTo: new mongoose.Types.ObjectId(userId)}},
+        {
+            $addFields: {
+                engagement: {
+                    numLikes: { $size: "$likes" },
+                    numComments: { $size: "$comments" },
+                    isLiked: { $in: [new mongoose.Types.ObjectId(userId), "$likes"] },
+                }
+            }
+        },
+        {
+            $lookup: {
+                from: User.collection.name,
+                localField: 'userId',
+                foreignField: '_id',
+                as: 'author'
+            }
+        },
+        {$unwind: '$author'}, // $lookup returns an array, we need to unwind it
+        {
+            $project: {
+                text: 1,
+                images: 1,
+                comments: 1,
+                createdAt: 1,
+                'author.username': 1,
+                'author.fullname': 1,
+                'author._id': 1,
+                'engagement': 1,
+            }
+        },
+    ]);
+}
+
+export {createUser, createPost, getPosts, getPost, deletePost, likePost}

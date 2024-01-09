@@ -1,4 +1,4 @@
-import {createPost, deletePost, getPosts, likePost} from "../db/functions.js"
+import {createPost, deletePost, getPost, getPosts, likePost} from "../db/functions.js"
 
 async function handleCreatePost(req, res) {
     const userId = req.session.userId;
@@ -43,4 +43,13 @@ async function handleLikePost(req, res) {
     }
 }
 
-export {handleCreatePost, handleGetPosts, handleDeletePost, handleLikePost};
+async function handleGetPost(req, res) {
+    try {
+        const post = await getPost(req.params.post_id, req.session.userId);
+        res.status(200).json(post[0]);
+    } catch (err) {
+        res.status(500).json({error: `handleGetPost: internal error: ${err}`});
+    }
+}
+
+export {handleCreatePost, handleGetPosts, handleGetPost, handleDeletePost, handleLikePost};
