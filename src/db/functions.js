@@ -123,11 +123,13 @@ async function commentPost(postId, userId, content) {
     if (!user) {
         throw new Error(`commentPost: user ${userId} not found`);
     }
+
     /**@namespace user.fullname */
-    const post = await Post.findOneAndUpdate({_id: postId, visibleTo: userId}, {$push: {comments: {authorId: userId, authorName: user.fullname, content: content}}}, null);
+    const post = await Post.findOneAndUpdate({_id: postId, visibleTo: userId}, {$push: {comments: {authorId: userId, authorName: user.fullname, content: content}}}, {new: true});
     if (!post) {
         throw new Error(`commentPost: post ${postId} not found for user ${userId}`);
     }
+    return post;
 }
 
 export {createUser, createPost, getPosts, getPost, deletePost, likePost, commentPost}

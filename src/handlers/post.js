@@ -55,8 +55,8 @@ async function handleGetPost(req, res) {
 
 async function handleCommentPost(req, res) {
     try {
-        await commentPost(req.params.post_id, req.session.userId, req.body.content);
-        res.status(200).json({message: "ok"});
+        const post = await commentPost(req.params.post_id, req.session.userId, req.body.content);
+        res.status(200).json(post.comments[post.comments.length-1]);
     } catch (err) {
         res.status(500).json({error: `handleGetPost: internal error: ${err}`});
     }
